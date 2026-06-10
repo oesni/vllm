@@ -475,6 +475,20 @@ Supported models:
 
 Flags: `--tool-call-parser apertus`
 
+### Solar Open Models (`solar_open`)
+
+Supported models:
+
+* `upstage/Solar-Open-100B` (The chat template is already included in the Hugging Face model files.)
+
+Solar Open emits tool calls as
+`<|tool_call:begin|>{id}<|tool_call:name|>{name}<|tool_call:args|>{json-args}<|tool_call:end|>`
+blocks with model-generated 10-character `[a-z0-9]` tool call ids, and wraps
+its reasoning in a separate `<|think|>` turn, so the tool parser should be
+used together with the matching reasoning parser.
+
+Flags: `--tool-call-parser solar_open --reasoning-parser solar_open`
+
 ### Models with Pythonic Tool Calls (`pythonic`)
 
 A growing number of models output a python list to represent tool calls instead of using JSON. This has the advantage of inherently supporting parallel tool calls and removing ambiguity around the JSON schema required for tool calls. The `pythonic` tool parser can support such models.

@@ -166,6 +166,10 @@ _TOOL_PARSERS_TO_REGISTER = {
         "seed_oss_tool_parser",
         "SeedOssToolParser",
     ),
+    "solar_open": (
+        "solar_open_tool_parser",
+        "SolarOpenToolParser",
+    ),
     "step3": (
         "step3_tool_parser",
         "Step3ToolParser",
