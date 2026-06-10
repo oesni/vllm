@@ -112,6 +112,10 @@ _REASONING_PARSERS_TO_REGISTER = {
         "seedoss_reasoning_parser",
         "SeedOSSReasoningParser",
     ),
+    "solar_open": (
+        "solar_open_reasoning_parser",
+        "SolarOpenReasoningParser",
+    ),
     "step3": (
         "step3_reasoning_parser",
         "Step3ReasoningParser",
