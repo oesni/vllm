@@ -1,9 +1,11 @@
 # SPDX-License-Identifier: Apache-2.0
 # SPDX-FileCopyrightText: Copyright contributors to the vLLM project
 
+import re
 import warnings
 from collections.abc import Mapping
 from typing import Literal
+from unittest.mock import MagicMock
 
 import pytest
 import torch
@@ -15,6 +17,8 @@ from vllm.config import ModelConfig
 from vllm.entrypoints.chat_utils import (
     ConversationMessage,
     _postprocess_messages,
+    get_tool_call_id_type,
+    make_tool_call_id,
     parse_chat_messages,
     parse_chat_messages_async,
 )
@@ -2742,3 +2746,26 @@ def test_postprocess_messages_null_arguments_string():
     tool_calls = messages[0]["tool_calls"]
     assert tool_calls is not None
     assert tool_calls[0]["function"]["arguments"] == {}
+
+
+def test_make_tool_call_id_solar_open():
+    assert re.fullmatch(r"[a-z0-9]{10}", make_tool_call_id(id_type="solar_open"))
+
+
+def test_make_tool_call_id_random_default():
+    assert make_tool_call_id().startswith("chatcmpl-tool-")
+
+
+@pytest.mark.parametrize(
+    ("model_type", "expected_id_type"),
+    [
+        ("kimi_k2", "kimi_k2"),
+        ("solar_open", "solar_open"),
+        ("llama", "random"),
+    ],
+)
+def test_get_tool_call_id_type(model_type, expected_id_type):
+    model_config = MagicMock()
+    model_config.hf_text_config.model_type = model_type
+    model_config.hf_overrides = None
+    assert get_tool_call_id_type(model_config) == expected_id_type

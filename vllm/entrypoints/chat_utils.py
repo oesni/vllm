@@ -3,6 +3,8 @@
 
 import asyncio
 import json
+import random
+import string
 from abc import ABC, abstractmethod
 from collections import Counter, defaultdict
 from collections.abc import Awaitable, Callable, Iterable
@@ -1958,12 +1960,20 @@ def get_tool_call_id_type(model_config: ModelConfig) -> str:
         and hf_overrides.get("model_type") in _KIMI_MODEL_TYPES
     ):
         return "kimi_k2"
+    if model_config.hf_text_config.model_type == "solar_open" or (
+        isinstance(hf_overrides, dict)
+        and hf_overrides.get("model_type") == "solar_open"
+    ):
+        return "solar_open"
     return "random"
 
 
 def make_tool_call_id(id_type: str = "random", func_name=None, idx=None):
     if id_type == "kimi_k2":
         return f"functions.{func_name}:{idx}"
+    elif id_type == "solar_open":
+        # Solar Open tool call ids are 10 characters of [a-z0-9].
+        return "".join(random.choices(string.ascii_lowercase + string.digits, k=10))
     else:
         # by default return random
         return f"chatcmpl-tool-{random_uuid()}"
